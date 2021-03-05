@@ -9,7 +9,7 @@ set "SameColorForSizeAndFolder=disabled" & rem replace disabled with enabled
 rem Set the following variable to enabled if you want to have different colors for the tree and folders
 set "SameColorForTreeAndFolders=disabled" & rem replace disabled with enabled
 rem Set the following variable to enabled if you want to disable the color white for random colors
-set "DisableColorWhiteForRandomColors=disabled"
+set "DisableColorWhiteForRandomColors=disabled" & rem replace disabled with enabled
 setlocal enableDelayedExpansion
 set "reachedend=                                                                                                                                                                     "
 FOR /F %%A in ('ECHO prompt $E^| cmd') DO SET "ESC=%%A"
