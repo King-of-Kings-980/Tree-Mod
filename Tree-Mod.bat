@@ -1,25 +1,30 @@
 @echo off
 title Tree Mod Whith Colors and Folder Sizes
+rem Set the following variable to enabled to set the color of the tree and the folders everytime you start the script. (If you just press ENTER, the colors will be randomized)
+set "ChooseColor=disabled" & rem replace disabled with enabled
+rem Set the following variable to enabled to set the start folder every time you start this script. (If you just press ENTER, the path will not be changed.)
+set "ChoosePath=disabled" & rem replace disabled with enabled
+rem Set the following variable to enabled if you want the names of the Folders and the size to be displayed in the same color
+set "SameColorForSizeAndFolder=disabled" & rem replace disabled with enabled
+rem Set the following variable to enabled if you want to have different colors for the tree and folders
+set "SameColorForTreeAndFolders=disabled" & rem replace disabled with enabled
+rem Set the following variable to enabled if you want to disable the color white for random colors
+set "DisableColorWhiteForRandomColors=disabled"
 setlocal enableDelayedExpansion
 set "reachedend=                                                                                                                                                                     "
 FOR /F %%A in ('ECHO prompt $E^| cmd') DO SET "ESC=%%A"
-::rem If the script crashes at the end or it doesn't diplay a white line and you do not have Windows 10, delete the following line:
+rem If the script crashes at the end or it doesn't diplay a white line and you do not have Windows 10, delete the following line:
 set "reachedend=%reachedend%%ESC%[K"
-::REM DELETE THE FOLLOWING "::" TO SET THE FOLDER EVERY TIME YOU START THIS SCRIPT (IF YOU JUST PRESS ENTER, THE PATH WILL NOT BE CHANGED)
-::REM ####################################################################################################################################
-::echo Path:
-::set /p _path=
-::if not defined _path set _path=%cd%
-::cls
-::cd /d "!_path!"
-::if "%cd%"=="C:\" cd Users
-::REM ####################################################################################################################################
-::REM DELETE THE FOLLOWING "::" IF YOU WANT THE NAMES OF THE FOLDERS TO BE DISPLAYED IN THE SAME COLOR AS THE SIZE
-::REM ############################################################################################################
-::set "_namesizecolor=y"
-::REM ############################################################################################################
-title %cd%
+if not "%ChoosePath%"="enabled" goto SetColors
+echo Path:
+set /p _path=
+if not defined _path set _path=%cd%
+cls
+cd /d "!_path!"
+if "%cd%"=="C:\" cd Users
 :SetColors
+if "%SameColorForSizeAndFolder%"=="enabled" set "_namesizecolor=y"
+title %cd%
 Set _fRed=%ESC%[31m
 Set _fGreen=%ESC%[32m
 Set _fYellow=%ESC%[33m
@@ -38,80 +43,78 @@ Set _fBWhite=%ESC%[97m
 Set _bBWhite=%ESC%[107m
 Set _bRed=%ESC%[41m
 Set _RESET=%ESC%[0m
-::REM DELETE THE FOLLOWING "::" TO SET THE COLOR OF THE TREE AND THE FOLDERS EVERYTIME YOU START THE SCRIPT (IF YOU JUST PRESS ENTER, THE COLORS WILL BE RANDOMIZED)
-::REM ##############################################################################################################################################################
-::echo Select the color of the tree:
-::echo %_RESET%1. %_fRed%Red
-::echo %_RESET%2. %_fBRed%Red
-::echo %_RESET%3. %_fGreen%Green
-::echo %_RESET%4. %_fBGreen%Green
-::echo %_RESET%5. %_fYellow%Yellow
-::echo %_RESET%6. %_fBYellow%Yellow
-::echo %_RESET%7. %_fBlue%Blue
-::echo %_RESET%8. %_fBBlue%Blue
-::echo %_RESET%9. %_fMag%Mag
-::echo %_RESET%10. %_fBMag%Mag
-::echo %_RESET%11. %_fCyan%Cyan
-::echo %_RESET%12. %_fBCyan%Cyan
-::echo %_RESET%13. %_fBWhite%White
-::echo %_RESET%14. %_fLGray%Gray
-::echo %_RESET%15. %_fDGray%Gray%_RESET%
-::set /p colorchoice=
-::cls
-::if "%colorchoice%"=="1" set tcolor=_fRed
-::if "%colorchoice%"=="2" set tcolor=_fBRed
-::if "%colorchoice%"=="3" set tcolor=_fGreen
-::if "%colorchoice%"=="4" set tcolor=_fBGreen
-::if "%colorchoice%"=="5" set tcolor=_fYellow
-::if "%colorchoice%"=="6" set tcolor=_fBYellow
-::if "%colorchoice%"=="7" set tcolor=_fBlue
-::if "%colorchoice%"=="8" set tcolor=_fBBlue
-::if "%colorchoice%"=="9" set tcolor=_fMag
-::if "%colorchoice%"=="10" set tcolor=_fBMag
-::if "%colorchoice%"=="11" set tcolor=_fCyan
-::if "%colorchoice%"=="12" set tcolor=_fBCyan
-::if "%colorchoice%"=="13" set tcolor=_fBWhite
-::if "%colorchoice%"=="14" set tcolor=_fLGray
-::if "%colorchoice%"=="15" set tcolor=_fDGray
-::if not defined tcolor goto RandomColors
-::if "%_namesizecolor%"=="y" goto nextaftersetcolor
-::echo %_RESET%Tree color: !%tcolor%!ÄÄÄÄÄ
-::echo %_RESET%Select the color of folders:
-::echo %_RESET%1. %_fRed%Red
-::echo %_RESET%2. %_fBRed%Red
-::echo %_RESET%3. %_fGreen%Green
-::echo %_RESET%4. %_fBGreen%Green
-::echo %_RESET%5. %_fYellow%Yellow
-::echo %_RESET%6. %_fBYellow%Yellow
-::echo %_RESET%7. %_fBlue%Blue
-::echo %_RESET%8. %_fBBlue%Blue
-::echo %_RESET%9. %_fMag%Mag
-::echo %_RESET%10. %_fBMag%Mag
-::echo %_RESET%11. %_fCyan%Cyan
-::echo %_RESET%12. %_fBCyan%Cyan
-::echo %_RESET%13. %_fBWhite%White
-::echo %_RESET%14. %_fLGray%Gray
-::echo %_RESET%15. %_fDGray%Gray%_RESET%
-::set /p colorchoice=
-::cls
-::if "%colorchoice%"=="1" set fcolor=_fRed
-::if "%colorchoice%"=="2" set fcolor=_fBRed
-::if "%colorchoice%"=="3" set fcolor=_fGreen
-::if "%colorchoice%"=="4" set fcolor=_fBGreen
-::if "%colorchoice%"=="5" set fcolor=_fYellow
-::if "%colorchoice%"=="6" set fcolor=_fBYellow
-::if "%colorchoice%"=="7" set fcolor=_fBlue
-::if "%colorchoice%"=="8" set fcolor=_fBBlue
-::if "%colorchoice%"=="9" set fcolor=_fMag
-::if "%colorchoice%"=="10" set fcolor=_fBMag
-::if "%colorchoice%"=="11" set fcolor=_fCyan
-::if "%colorchoice%"=="12" set fcolor=_fBCyan
-::if "%colorchoice%"=="13" set fcolor=_fBWhite
-::if "%colorchoice%"=="14" set fcolor=_fLGray
-::if "%colorchoice%"=="15" set fcolor=_fDGray
-::if not defined fcolor goto RandomColors
-::goto StartTree
-::REM ##############################################################################################################################################################
+if not "%ChooseColor%"="enabled" goto RandomColors
+echo Select the color of the tree:
+echo %_RESET%1. %_fRed%Red
+echo %_RESET%2. %_fBRed%Red
+echo %_RESET%3. %_fGreen%Green
+echo %_RESET%4. %_fBGreen%Green
+echo %_RESET%5. %_fYellow%Yellow
+echo %_RESET%6. %_fBYellow%Yellow
+echo %_RESET%7. %_fBlue%Blue
+echo %_RESET%8. %_fBBlue%Blue
+echo %_RESET%9. %_fMag%Mag
+echo %_RESET%10. %_fBMag%Mag
+echo %_RESET%11. %_fCyan%Cyan
+echo %_RESET%12. %_fBCyan%Cyan
+echo %_RESET%13. %_fBWhite%White
+echo %_RESET%14. %_fLGray%Gray
+echo %_RESET%15. %_fDGray%Gray%_RESET%
+set /p colorchoice=
+cls
+if "%colorchoice%"=="1" set tcolor=_fRed
+if "%colorchoice%"=="2" set tcolor=_fBRed
+if "%colorchoice%"=="3" set tcolor=_fGreen
+if "%colorchoice%"=="4" set tcolor=_fBGreen
+if "%colorchoice%"=="5" set tcolor=_fYellow
+if "%colorchoice%"=="6" set tcolor=_fBYellow
+if "%colorchoice%"=="7" set tcolor=_fBlue
+if "%colorchoice%"=="8" set tcolor=_fBBlue
+if "%colorchoice%"=="9" set tcolor=_fMag
+if "%colorchoice%"=="10" set tcolor=_fBMag
+if "%colorchoice%"=="11" set tcolor=_fCyan
+if "%colorchoice%"=="12" set tcolor=_fBCyan
+if "%colorchoice%"=="13" set tcolor=_fBWhite
+if "%colorchoice%"=="14" set tcolor=_fLGray
+if "%colorchoice%"=="15" set tcolor=_fDGray
+if not defined tcolor goto RandomColors
+if "%_namesizecolor%"=="y" goto nextaftersetcolor
+echo %_RESET%Tree color: !%tcolor%!ÄÄÄÄÄ
+echo %_RESET%Select the color of folders:
+echo %_RESET%1. %_fRed%Red
+echo %_RESET%2. %_fBRed%Red
+echo %_RESET%3. %_fGreen%Green
+echo %_RESET%4. %_fBGreen%Green
+echo %_RESET%5. %_fYellow%Yellow
+echo %_RESET%6. %_fBYellow%Yellow
+echo %_RESET%7. %_fBlue%Blue
+echo %_RESET%8. %_fBBlue%Blue
+echo %_RESET%9. %_fMag%Mag
+echo %_RESET%10. %_fBMag%Mag
+echo %_RESET%11. %_fCyan%Cyan
+echo %_RESET%12. %_fBCyan%Cyan
+echo %_RESET%13. %_fBWhite%White
+echo %_RESET%14. %_fLGray%Gray
+echo %_RESET%15. %_fDGray%Gray%_RESET%
+set /p colorchoice=
+cls
+if "%colorchoice%"=="1" set fcolor=_fRed
+if "%colorchoice%"=="2" set fcolor=_fBRed
+if "%colorchoice%"=="3" set fcolor=_fGreen
+if "%colorchoice%"=="4" set fcolor=_fBGreen
+if "%colorchoice%"=="5" set fcolor=_fYellow
+if "%colorchoice%"=="6" set fcolor=_fBYellow
+if "%colorchoice%"=="7" set fcolor=_fBlue
+if "%colorchoice%"=="8" set fcolor=_fBBlue
+if "%colorchoice%"=="9" set fcolor=_fMag
+if "%colorchoice%"=="10" set fcolor=_fBMag
+if "%colorchoice%"=="11" set fcolor=_fCyan
+if "%colorchoice%"=="12" set fcolor=_fBCyan
+if "%colorchoice%"=="13" set fcolor=_fBWhite
+if "%colorchoice%"=="14" set fcolor=_fLGray
+if "%colorchoice%"=="15" set fcolor=_fDGray
+if not defined fcolor goto RandomColors
+goto StartTree
 :RandomColors
 set "fcolor="
 set "tcolor="
@@ -161,15 +164,11 @@ if "%_RND%"=="W" set %ground%color=_fBCyan
 if "%_RND%"=="X" set %ground%color=_fBWhite
 if not defined %ground%color goto LoopColorSelector
 if "%ground%"=="f" goto SetGround
-::REM DELETE THE FOLLOWING "::" TO DENY THAT THE TREE AND FOLDERS HAVE THE SAME NAME
-::REM ###############################################################################
-::if "!fcolor!"=="%tcolor%" goto SetGround
-::REM ###############################################################################
-::REM DELETE THE FOLLOWING "::" TO DISABLE THE COLOR WHITE FOR RANDOM COLORS
-::REM ######################################################################
-::if "!fcolor!"=="_fBWhite" goto SetGround
-::if "%tcolor%"=="_fBWhite" goto SetGround
-::REM ######################################################################
+
+if not "%SameColorForTreeAndFolders%"=="enabled" (if "!fcolor!"=="%tcolor%" goto SetGround)
+if "%DisableColorWhiteForRandomColors%"=="disabled" goto StartTree
+if "!fcolor!"=="_fBWhite" goto SetGround
+if "%tcolor%"=="_fBWhite" goto SetGround
 :StartTree
 set "fcolor=!%fcolor%!"
 :nextaftersetcolor
@@ -187,7 +186,7 @@ set "kl=À"
 set "t[a]=³"
 set "kl=Ã"
 )
-cd "%%a"
+cd "%%a" 2>nul
 if !errorlevel!==0 (
 set cd[a]=y
 ) else (
@@ -207,7 +206,7 @@ set "kl=À"
 set "t[b]=³"
 set "kl=Ã"
 )
-cd "%%b"
+cd "%%b" 2>nul
 if !errorlevel!==0 (
 set cd[b]=y
 ) else (
@@ -227,7 +226,7 @@ set "kl=À"
 set "t[c]=³"
 set "kl=Ã"
 )
-cd "%%c"
+cd "%%c" 2>nul
 if !errorlevel!==0 (
 set cd[c]=y
 ) else (
@@ -247,7 +246,7 @@ set "kl=À"
 set "t[d]=³"
 set "kl=Ã"
 )
-cd "%%d"
+cd "%%d" 2>nul
 if !errorlevel!==0 (
 set cd[d]=y
 ) else (
@@ -267,7 +266,7 @@ set "kl=À"
 set "t[e]=³"
 set "kl=Ã"
 )
-cd "%%e"
+cd "%%e" 2>nul
 if !errorlevel!==0 (
 set cd[e]=y
 ) else (
@@ -287,7 +286,7 @@ set "kl=À"
 set "t[f]=³"
 set "kl=Ã"
 )
-cd "%%f"
+cd "%%f" 2>nul
 if !errorlevel!==0 (
 set cd[f]=y
 ) else (
@@ -307,7 +306,7 @@ set "kl=À"
 set "t[g]=³"
 set "kl=Ã"
 )
-cd "%%g"
+cd "%%g" 2>nul
 if !errorlevel!==0 (
 set cd[g]=y
 ) else (
@@ -327,7 +326,7 @@ set "kl=À"
 set "t[h]=³"
 set "kl=Ã"
 )
-cd "%%h"
+cd "%%h" 2>nul
 if !errorlevel!==0 (
 set cd[h]=y
 ) else (
@@ -347,7 +346,7 @@ set "kl=À"
 set "t[i]=³"
 set "kl=Ã"
 )
-cd "%%i"
+cd "%%i" 2>nul
 if !errorlevel!==0 (
 set cd[i]=y
 ) else (
@@ -367,7 +366,7 @@ set "kl=À"
 set "t[j]=³"
 set "kl=Ã"
 )
-cd "%%j"
+cd "%%j" 2>nul
 if !errorlevel!==0 (
 set cd[j]=y
 ) else (
@@ -387,7 +386,7 @@ set "kl=À"
 set "t[k]=³"
 set "kl=Ã"
 )
-cd "%%k"
+cd "%%k" 2>nul
 if !errorlevel!==0 (
 set cd[k]=y
 ) else (
@@ -407,7 +406,7 @@ set "kl=À"
 set "t[l]=³"
 set "kl=Ã"
 )
-cd "%%l"
+cd "%%l" 2>nul
 if !errorlevel!==0 (
 set cd[l]=y
 ) else (
@@ -427,7 +426,7 @@ set "kl=À"
 set "t[m]=³"
 set "kl=Ã"
 )
-cd "%%m"
+cd "%%m" 2>nul
 if !errorlevel!==0 (
 set cd[m]=y
 ) else (
@@ -447,7 +446,7 @@ set "kl=À"
 set "t[n]=³"
 set "kl=Ã"
 )
-cd "%%n"
+cd "%%n" 2>nul
 if !errorlevel!==0 (
 set cd[n]=y
 ) else (
@@ -467,7 +466,7 @@ set "kl=À"
 set "t[o]=³"
 set "kl=Ã"
 )
-cd "%%o"
+cd "%%o" 2>nul
 if !errorlevel!==0 (
 set cd[o]=y
 ) else (
@@ -487,7 +486,7 @@ set "kl=À"
 set "t[p]=³"
 set "kl=Ã"
 )
-cd "%%p"
+cd "%%p" 2>nul
 if !errorlevel!==0 (
 set cd[p]=y
 ) else (
@@ -507,7 +506,7 @@ set "kl=À"
 set "t[q]=³"
 set "kl=Ã"
 )
-cd "%%q"
+cd "%%q" 2>nul
 if !errorlevel!==0 (
 set cd[q]=y
 ) else (
@@ -527,7 +526,7 @@ set "kl=À"
 set "t[r]=³"
 set "kl=Ã"
 )
-cd "%%r"
+cd "%%r" 2>nul
 if !errorlevel!==0 (
 set cd[r]=y
 ) else (
@@ -547,7 +546,7 @@ set "kl=À"
 set "t[s]=³"
 set "kl=Ã"
 )
-cd "%%s"
+cd "%%s" 2>nul
 if !errorlevel!==0 (
 set cd[s]=y
 ) else (
@@ -567,7 +566,7 @@ set "kl=À"
 set "t[t]=³"
 set "kl=Ã"
 )
-cd "%%t"
+cd "%%t" 2>nul
 if !errorlevel!==0 (
 set cd[t]=y
 ) else (
@@ -587,7 +586,7 @@ set "kl=À"
 set "t[u]=³"
 set "kl=Ã"
 )
-cd "%%u"
+cd "%%u" 2>nul
 if !errorlevel!==0 (
 set cd[u]=y
 ) else (
@@ -607,7 +606,7 @@ set "kl=À"
 set "t[v]=³"
 set "kl=Ã"
 )
-cd "%%v"
+cd "%%v" 2>nul
 if !errorlevel!==0 (
 set cd[v]=y
 ) else (
@@ -627,7 +626,7 @@ set "kl=À"
 set "t[w]=³"
 set "kl=Ã"
 )
-cd "%%w"
+cd "%%w" 2>nul
 if !errorlevel!==0 (
 set cd[w]=y
 ) else (
