@@ -1,5 +1,6 @@
 @echo off
 title Tree Mod Whith Colors and Folder Sizes
+:Settings
 rem Set the following variable to enabled to set the color of the tree and the folders everytime you start the script. (If you just press ENTER, the colors will be randomized)
 set "ChooseColor=disabled" & rem replace disabled with enabled
 rem Set the following variable to enabled to set the start folder every time you start this script. (If you just press ENTER, the path will not be changed.)
@@ -10,11 +11,12 @@ rem Set the following variable to enabled if you want to have different colors f
 set "SameColorForTreeAndFolders=disabled" & rem replace disabled with enabled
 rem Set the following variable to enabled if you want to disable the color white for random colors
 set "DisableColorWhiteForRandomColors=disabled" & rem replace disabled with enabled
-setlocal enableDelayedExpansion
 set "reachedend=                                                                                                                                                                     "
 FOR /F %%A in ('ECHO prompt $E^| cmd') DO SET "ESC=%%A"
 rem If the script crashes at the end or it doesn't diplay a white line and you do not have Windows 10, delete the following line:
 set "reachedend=%reachedend%%ESC%[K"
+:MainScript
+setlocal enableDelayedExpansion
 if not "%ChoosePath%"="enabled" goto SetColors
 echo Path:
 set /p _path=
