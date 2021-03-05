@@ -26,7 +26,6 @@ set /p _path=
 if not defined _path set _path=%cd%
 cls
 cd /d "!_path!"
-if "%cd%"=="C:\" cd Users
 :MaxSize
 if not "%DisableLowSizes%"=="enabled" goto SetColors
 cls
