@@ -12,12 +12,12 @@ set "SameColorForTreeAndFolders=disabled" & rem replace disabled with enabled
 rem Set the following variable to enabled if you want to disable the color white for random colors
 set "DisableColorWhiteForRandomColors=disabled" & rem replace disabled with enabled
 set "reachedend=                                                                                                                                                                     "
+setlocal enableDelayedExpansion
 FOR /F %%A in ('ECHO prompt $E^| cmd') DO SET "ESC=%%A"
 rem If the script crashes at the end or it doesn't diplay a white line and you do not have Windows 10, delete the following line:
 set "reachedend=%reachedend%%ESC%[K"
 :MainScript
-setlocal enableDelayedExpansion
-if not "%ChoosePath%"="enabled" goto SetColors
+if not "%ChoosePath%"=="enabled" goto SetColors
 echo Path:
 set /p _path=
 if not defined _path set _path=%cd%
@@ -45,7 +45,7 @@ Set _fBWhite=%ESC%[97m
 Set _bBWhite=%ESC%[107m
 Set _bRed=%ESC%[41m
 Set _RESET=%ESC%[0m
-if not "%ChooseColor%"="enabled" goto RandomColors
+if not "%ChooseColor%"=="enabled" goto RandomColors
 echo Select the color of the tree:
 echo %_RESET%1. %_fRed%Red
 echo %_RESET%2. %_fBRed%Red
