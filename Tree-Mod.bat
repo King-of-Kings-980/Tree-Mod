@@ -5,7 +5,7 @@ rem Set the following variable to enabled to set the color of the tree and the f
 set "ChooseColor=disabled" & rem replace disabled with enabled
 rem Set the following variable to enabled to set the start folder every time you start this script. (If you just press ENTER, the path will not be changed.)
 set "ChoosePath=disabled" & rem replace disabled with enabled
-rem Set the following variable to enabled if you want the names of the Folders and the size to be displayed in the same color
+rem Set the following variable to enabled if you want the names of the Folders and the size to be able to be displayed in the same color
 set "SameColorForSizeAndFolder=disabled" & rem replace disabled with enabled
 rem Set the following variable to enabled if you want to have different colors for the tree and folders
 set "SameColorForTreeAndFolders=disabled" & rem replace disabled with enabled
