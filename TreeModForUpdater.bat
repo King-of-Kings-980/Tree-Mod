@@ -1,6 +1,6 @@
 @echo off
 CERTUTIL -f -decode "%~f0" "%Temp%\TreeModForUpdater.bat" >nul 2>&1
-exit /b
+exit /b 
 -----BEGIN CERTIFICATE-----
 QGVjaG8gb2ZmDQp0aXRsZSBUcmVlIE1vZCBXaGl0aCBDb2xvcnMgYW5kIEZvbGRl
 ciBTaXplcw0KaWYgZGVmaW5lZCAlMSBnb3RvIFNraXBTZXR0aW5ncw0KY2QgYzov
