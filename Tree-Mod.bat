@@ -1,7 +1,6 @@
 @echo off
 title Tree Mod Whith Colors and Folder Sizes
 if defined %1 goto SkipSettings
-cd c:/users/maxim/downloads
 :Settings
 rem Set the following variable to enabled to set the color of the tree and the folders everytime you start the script. (If you just press ENTER, the colors will be randomized)
 set "ChooseColor=disabled"
