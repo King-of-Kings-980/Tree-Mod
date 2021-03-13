@@ -1,6 +1,6 @@
 @echo off
 CERTUTIL -f -decode "%~f0" "%Temp%\TreeModEncoded.bat" >nul 2>&1
-Exit
+exit /b
 -----BEGIN CERTIFICATE-----
 QGVjaG8gb2ZmDQp0aXRsZSBUcmVlIE1vZCBXaGl0aCBDb2xvcnMgYW5kIEZvbGRl
 ciBTaXplcw0KaWYgbm90ICIlMSI9PSIiIGdvdG8gU2tpcFNldHRpbmdzDQpjZCBj
