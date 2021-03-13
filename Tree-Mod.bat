@@ -1,18 +1,21 @@
 @echo off
 title Tree Mod Whith Colors and Folder Sizes
+if defined %1 goto SkipSettings
+cd c:/users/maxim/downloads
 :Settings
 rem Set the following variable to enabled to set the color of the tree and the folders everytime you start the script. (If you just press ENTER, the colors will be randomized)
-set "ChooseColor=disabled" & rem replace disabled with enabled
+set "ChooseColor=disabled"
 rem Set the following variable to enabled to set the start folder every time you start this script. (If you just press ENTER, the path will not be changed.)
-set "ChoosePath=disabled" & rem replace disabled with enabled
-rem Set the following variable to enabled if you want the names of the Folders and the size to be able to be displayed in the same color
-set "SameColorForSizeAndFolder=disabled" & rem replace disabled with enabled
+set "ChoosePath=disabled"
+rem Set the following variable to enabled if you want the names of the Folders and the size to be displayed in the same color
+set "SameColorForSizeAndFolder=disabled"
 rem Set the following variable to enabled if you want to have different colors for the tree and folders
-set "SameColorForTreeAndFolders=disabled" & rem replace disabled with enabled
+set "SameColorForTreeAndFolders=disabled"
 rem Set the following variable to enabled if you want to disable the color white for random colors
-set "DisableColorWhiteForRandomColors=disabled" & rem replace disabled with enabled
+set "DisableColorWhiteForRandomColors=disabled"
 rem Set the following variable to enabled if you want to choose how big the size of a folder has to be to display its subfolders. This script will always show the main folder and at least one subfolder
-set "DisableLowSizes=disabled" & rem replace disabled with enabled
+set "DisableLowSizes=enabled"
+:SkipSettings
 set "reachedend=                                                                                                                                                                     "
 setlocal enableDelayedExpansion
 FOR /F %%A in ('ECHO prompt $E^| cmd') DO SET "ESC=%%A"
@@ -26,6 +29,7 @@ set /p _path=
 if not defined _path set _path=%cd%
 cls
 cd /d "!_path!"
+if "%cd%"=="C:\" cd Users
 :MaxSize
 if not "%DisableLowSizes%"=="enabled" goto SetColors
 cls
@@ -65,9 +69,9 @@ echo Wrong unit!
 timeout /t 2 /nobreak >nul
 goto MaxSize
 )
-cls
 title Path: %cd%; Size limit: %low[1]% %low[2]%
 :SetColors
+cls
 if "%SameColorForSizeAndFolder%"=="enabled" set "_namesizecolor=y"
 title %cd%
 Set _fRed=%ESC%[31m
@@ -220,17 +224,8 @@ set "fcolor=!%fcolor%!"
 set "tcolor=!%tcolor%!"
 call :FolderSize
 echo %maincol%%cd% !scolor!!size!
+call :CountFolders a
 for /d %%a in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[a]=%%z"
-set /a counter[a]=!counter[a]!+1
-if "!counter[a]!"=="!count[a]!" (
-set counter[a]=0
-set "t[a]= "
-set "kl=À"
-) else (
-set "t[a]=³"
-set "kl=Ã"
-)
 cd "%%a" 2>nul
 if !errorlevel!==0 (
 set cd[a]=y
@@ -238,20 +233,20 @@ set cd[a]=y
 set cd[a]=n
 )
 call :FolderSize
-echo %tcolor%!kl!ÄÄÄ!fcolor!%%a !scolor!!size!
-if !cd[a]!==y (
 if "!shownext!"=="y" (
-for /d %%b in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[b]=%%z"
-set /a counter[b]=!counter[b]!+1
-if "!counter[b]!"=="!count[b]!" (
-set counter[b]=0
-set "t[b]= "
+set /a counter[a]=!counter[a]!+1
+if "!counter[a]!"=="!count[a]!" (
+set "counter[a]="& set "count[a]="
+set "t[a]= "
 set "kl=À"
 ) else (
-set "t[b]=³"
+set "t[a]=³"
 set "kl=Ã"
 )
+echo %tcolor%!kl!ÄÄÄ!fcolor!%%a !scolor!!size!
+if !cd[a]!==y (
+call :CountFolders b
+for /d %%b in (*) do (
 cd "%%b" 2>nul
 if !errorlevel!==0 (
 set cd[b]=y
@@ -259,20 +254,20 @@ set cd[b]=y
 set cd[b]=n
 )
 call :FolderSize
-echo %tcolor%!t[a]!   !kl!ÄÄÄ!fcolor!%%b !scolor!!size!
-if !cd[b]!==y (
 if "!shownext!"=="y" (
-for /d %%c in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[c]=%%z"
-set /a counter[c]=!counter[c]!+1
-if "!counter[c]!"=="!count[c]!" (
-set counter[c]=0
-set "t[c]= "
+set /a counter[b]=!counter[b]!+1
+if "!counter[b]!"=="!count[b]!" (
+set "counter[b]="& set "count[b]="
+set "t[b]= "
 set "kl=À"
 ) else (
-set "t[c]=³"
+set "t[b]=³"
 set "kl=Ã"
 )
+echo %tcolor%!t[a]!   !kl!ÄÄÄ!fcolor!%%b !scolor!!size!
+if !cd[b]!==y (
+call :CountFolders c
+for /d %%c in (*) do (
 cd "%%c" 2>nul
 if !errorlevel!==0 (
 set cd[c]=y
@@ -280,20 +275,20 @@ set cd[c]=y
 set cd[c]=n
 )
 call :FolderSize
-echo %tcolor%!t[a]!   !t[b]!   !kl!ÄÄÄ!fcolor!%%c !scolor!!size!
-if !cd[c]!==y (
 if "!shownext!"=="y" (
-for /d %%d in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[d]=%%z"
-set /a counter[d]=!counter[d]!+1
-if "!counter[d]!"=="!count[d]!" (
-set counter[d]=0
-set "t[d]= "
+set /a counter[c]=!counter[c]!+1
+if "!counter[c]!"=="!count[c]!" (
+set "counter[c]="& set "count[c]="
+set "t[c]= "
 set "kl=À"
 ) else (
-set "t[d]=³"
+set "t[c]=³"
 set "kl=Ã"
 )
+echo %tcolor%!t[a]!   !t[b]!   !kl!ÄÄÄ!fcolor!%%c !scolor!!size!
+if !cd[c]!==y (
+call :CountFolders d
+for /d %%d in (*) do (
 cd "%%d" 2>nul
 if !errorlevel!==0 (
 set cd[d]=y
@@ -301,20 +296,20 @@ set cd[d]=y
 set cd[d]=n
 )
 call :FolderSize
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !kl!ÄÄÄ!fcolor!%%d !scolor!!size!
-if !cd[d]!==y (
 if "!shownext!"=="y" (
-for /d %%e in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[e]=%%z"
-set /a counter[e]=!counter[e]!+1
-if "!counter[e]!"=="!count[e]!" (
-set counter[e]=0
-set "t[e]= "
+set /a counter[d]=!counter[d]!+1
+if "!counter[d]!"=="!count[d]!" (
+set "counter[d]="& set "count[d]="
+set "t[d]= "
 set "kl=À"
 ) else (
-set "t[e]=³"
+set "t[d]=³"
 set "kl=Ã"
 )
+echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !kl!ÄÄÄ!fcolor!%%d !scolor!!size!
+if !cd[d]!==y (
+call :CountFolders e
+for /d %%e in (*) do (
 cd "%%e" 2>nul
 if !errorlevel!==0 (
 set cd[e]=y
@@ -322,20 +317,20 @@ set cd[e]=y
 set cd[e]=n
 )
 call :FolderSize
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !kl!ÄÄÄ!fcolor!%%e !scolor!!size!
-if !cd[e]!==y (
 if "!shownext!"=="y" (
-for /d %%f in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[f]=%%z"
-set /a counter[f]=!counter[f]!+1
-if "!counter[f]!"=="!count[f]!" (
-set counter[f]=0
-set "t[f]= "
+set /a counter[e]=!counter[e]!+1
+if "!counter[e]!"=="!count[e]!" (
+set "counter[e]="& set "count[e]="
+set "t[e]= "
 set "kl=À"
 ) else (
-set "t[f]=³"
+set "t[e]=³"
 set "kl=Ã"
 )
+echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !kl!ÄÄÄ!fcolor!%%e !scolor!!size!
+if !cd[e]!==y (
+call :CountFolders f
+for /d %%f in (*) do (
 cd "%%f" 2>nul
 if !errorlevel!==0 (
 set cd[f]=y
@@ -343,14 +338,23 @@ set cd[f]=y
 set cd[f]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
+set /a counter[f]=!counter[f]!+1
+if "!counter[f]!"=="!count[f]!" (
+set "counter[f]="& set "count[f]="
+set "t[f]= "
+set "kl=À"
+) else (
+set "t[f]=³"
+set "kl=Ã"
+)
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !kl!ÄÄÄ!fcolor!%%f !scolor!!size!
 if !cd[f]!==y (
-if "!shownext!"=="y" (
+call :CountFolders g
 for /d %%g in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[g]=%%z"
 set /a counter[g]=!counter[g]!+1
 if "!counter[g]!"=="!count[g]!" (
-set counter[g]=0
+set "counter[g]="& set "count[g]="
 set "t[g]= "
 set "kl=À"
 ) else (
@@ -364,14 +368,14 @@ set cd[g]=y
 set cd[g]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !kl!ÄÄÄ!fcolor!%%g !scolor!!size!
 if !cd[g]!==y (
-if "!shownext!"=="y" (
+call :CountFolders h
 for /d %%h in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[h]=%%z"
 set /a counter[h]=!counter[h]!+1
 if "!counter[h]!"=="!count[h]!" (
-set counter[h]=0
+set "counter[h]="& set "count[h]="
 set "t[h]= "
 set "kl=À"
 ) else (
@@ -385,14 +389,14 @@ set cd[h]=y
 set cd[h]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !kl!ÄÄÄ!fcolor!%%h !scolor!!size!
 if !cd[h]!==y (
-if "!shownext!"=="y" (
+call :CountFolders i
 for /d %%i in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[i]=%%z"
 set /a counter[i]=!counter[i]!+1
 if "!counter[i]!"=="!count[i]!" (
-set counter[i]=0
+set "counter[i]="& set "count[i]="
 set "t[i]= "
 set "kl=À"
 ) else (
@@ -406,14 +410,14 @@ set cd[i]=y
 set cd[i]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !kl!ÄÄÄ!fcolor!%%i !scolor!!size!
 if !cd[i]!==y (
-if "!shownext!"=="y" (
+call :CountFolders j
 for /d %%j in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[j]=%%z"
 set /a counter[j]=!counter[j]!+1
 if "!counter[j]!"=="!count[j]!" (
-set counter[j]=0
+set "counter[j]="& set "count[j]="
 set "t[j]= "
 set "kl=À"
 ) else (
@@ -427,14 +431,14 @@ set cd[j]=y
 set cd[j]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !kl!ÄÄÄ!fcolor!%%j !scolor!!size!
 if !cd[j]!==y (
-if "!shownext!"=="y" (
+call :CountFolders k
 for /d %%k in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[k]=%%z"
 set /a counter[k]=!counter[k]!+1
 if "!counter[k]!"=="!count[k]!" (
-set counter[k]=0
+set "counter[k]="& set "count[k]="
 set "t[k]= "
 set "kl=À"
 ) else (
@@ -448,14 +452,14 @@ set cd[k]=y
 set cd[k]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !kl!ÄÄÄ!fcolor!%%k !scolor!!size!
 if !cd[k]!==y (
-if "!shownext!"=="y" (
+call :CountFolders l
 for /d %%l in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[l]=%%z"
 set /a counter[l]=!counter[l]!+1
 if "!counter[l]!"=="!count[l]!" (
-set counter[l]=0
+set "counter[l]="& set "count[l]="
 set "t[l]= "
 set "kl=À"
 ) else (
@@ -469,14 +473,14 @@ set cd[l]=y
 set cd[l]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !kl!ÄÄÄ!fcolor!%%l !scolor!!size!
 if !cd[l]!==y (
-if "!shownext!"=="y" (
+call :CountFolders m
 for /d %%m in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[m]=%%z"
 set /a counter[m]=!counter[m]!+1
 if "!counter[m]!"=="!count[m]!" (
-set counter[m]=0
+set "counter[m]="& set "count[m]="
 set "t[m]= "
 set "kl=À"
 ) else (
@@ -490,14 +494,14 @@ set cd[m]=y
 set cd[m]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !kl!ÄÄÄ!fcolor!%%m !scolor!!size!
 if !cd[m]!==y (
-if "!shownext!"=="y" (
+call :CountFolders n
 for /d %%n in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[n]=%%z"
 set /a counter[n]=!counter[n]!+1
 if "!counter[n]!"=="!count[n]!" (
-set counter[n]=0
+set "counter[n]="& set "count[n]="
 set "t[n]= "
 set "kl=À"
 ) else (
@@ -511,14 +515,14 @@ set cd[n]=y
 set cd[n]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !kl!ÄÄÄ!fcolor!%%n !scolor!!size!
 if !cd[n]!==y (
-if "!shownext!"=="y" (
+call :CountFolders o
 for /d %%o in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[o]=%%z"
 set /a counter[o]=!counter[o]!+1
 if "!counter[o]!"=="!count[o]!" (
-set counter[o]=0
+set "counter[o]="& set "count[o]="
 set "t[o]= "
 set "kl=À"
 ) else (
@@ -532,14 +536,14 @@ set cd[o]=y
 set cd[o]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !kl!ÄÄÄ!fcolor!%%o !scolor!!size!
 if !cd[o]!==y (
-if "!shownext!"=="y" (
+call :CountFolders p
 for /d %%p in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[p]=%%z"
 set /a counter[p]=!counter[p]!+1
 if "!counter[p]!"=="!count[p]!" (
-set counter[p]=0
+set "counter[p]="& set "count[p]="
 set "t[p]= "
 set "kl=À"
 ) else (
@@ -553,14 +557,14 @@ set cd[p]=y
 set cd[p]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !kl!ÄÄÄ!fcolor!%%p !scolor!!size!
 if !cd[p]!==y (
-if "!shownext!"=="y" (
+call :CountFolders q
 for /d %%q in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[q]=%%z"
 set /a counter[q]=!counter[q]!+1
 if "!counter[q]!"=="!count[q]!" (
-set counter[q]=0
+set "counter[q]="& set "count[q]="
 set "t[q]= "
 set "kl=À"
 ) else (
@@ -574,14 +578,14 @@ set cd[q]=y
 set cd[q]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !t[p]!   !kl!ÄÄÄ!fcolor!%%q !scolor!!size!
 if !cd[q]!==y (
-if "!shownext!"=="y" (
+call :CountFolders r
 for /d %%r in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[r]=%%z"
 set /a counter[r]=!counter[r]!+1
 if "!counter[r]!"=="!count[r]!" (
-set counter[r]=0
+set "counter[r]="& set "count[r]="
 set "t[r]= "
 set "kl=À"
 ) else (
@@ -595,14 +599,14 @@ set cd[r]=y
 set cd[r]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !t[p]!   !t[q]!   !kl!ÄÄÄ!fcolor!%%r !scolor!!size!
 if !cd[r]!==y (
-if "!shownext!"=="y" (
+call :CountFolders s
 for /d %%s in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[s]=%%z"
 set /a counter[s]=!counter[s]!+1
 if "!counter[s]!"=="!count[s]!" (
-set counter[s]=0
+set "counter[s]="& set "count[s]="
 set "t[s]= "
 set "kl=À"
 ) else (
@@ -616,14 +620,14 @@ set cd[s]=y
 set cd[s]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !t[p]!   !t[q]!   !t[r]!   !kl!ÄÄÄ!fcolor!%%s !scolor!!size!
 if !cd[s]!==y (
-if "!shownext!"=="y" (
+call :CountFolders t
 for /d %%t in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[t]=%%z"
 set /a counter[t]=!counter[t]!+1
 if "!counter[t]!"=="!count[t]!" (
-set counter[t]=0
+set "counter[t]="& set "count[t]="
 set "t[t]= "
 set "kl=À"
 ) else (
@@ -637,14 +641,14 @@ set cd[t]=y
 set cd[t]=n
 )
 call :FolderSize
+if "!shownext!"=="y" (
 echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !t[p]!   !t[q]!   !t[r]!   !t[s]!   !kl!ÄÄÄ!fcolor!%%t !scolor!!size!
 if !cd[t]!==y (
-if "!shownext!"=="y" (
+call :CountFolders u
 for /d %%u in (*) do (
-for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[u]=%%z"
 set /a counter[u]=!counter[u]!+1
 if "!counter[u]!"=="!count[u]!" (
-set counter[u]=0
+set "counter[u]="& set "count[u]="
 set "t[u]= "
 set "kl=À"
 ) else (
@@ -739,8 +743,9 @@ echo %_RESET%
 pause>nul
 exit /b
 :FolderSize
+if not "%DisableLowSizes%"=="enabled" goto FolderSizeNotEnabled
 for /f "tokens=2-3 delims= " %%y in ('
-robocopy "%CD%" "%TEMP%" /S /L /XJ /NFL /NDL /NJH /R:0 ^| findstr "Bytes"
+robocopy "!CD!" "%TEMP%" /S /L /XJ /NFL /NDL /NJH /R:0 ^| findstr "Bytes"
 ') do ( 
 set dim=%%z
 set "dim=!dim:k=KB!" & set "dim=!dim:m=MB!" & set "dim=!dim:g=GB!" & set "dim=!dim:t=TB!"    
@@ -753,7 +758,6 @@ if "!dim!"=="KB" (set "scolor=%_fDGray%" & set "dimnum=2")
 if "!dim!"=="MB" (set "scolor=%_fGreen%" & set "dimnum=3")
 if "!dim!"=="GB" (set "scolor=%_fYellow%" & set "dimnum=4")
 if "!dim!"=="TB" (set "scolor=%_fRed%" & set "dimnum=5")
-if not "%DisableLowSizes%"=="enabled" goto FolderSizeNotEnabledNext
 for /l %%z in (10,-1,1) do (if not "!sizee:.=!"=="!sizee!" set sizee=!sizee:~0,%%z!)
 if !low[2]! gtr !dimnum! (
 set "shownext=n"
@@ -770,4 +774,51 @@ set "fcolor=!scolor!"
 set "maincol=!scolor!"
 set "size=  %_RESET%^|^|^|   !scolor!%size%"
 )
+exit /b
+:FolderSizeNotEnabled
+for /f "tokens=2-3 delims= " %%y in ('
+robocopy "!CD!" "%TEMP%" /S /L /XJ /NFL /NDL /NJH /R:0 ^| findstr "Bytes"
+') do ( 
+set dim=%%z
+set "dim=!dim:k=KB!" & set "dim=!dim:m=MB!" & set "dim=!dim:g=GB!" & set "dim=!dim:t=TB!"    
+if !dim! EQU %%z set dim=B
+set "size=%%y !dim!"
+)
+if "!dim!"=="B" (set "scolor=%_fDGray%" & set "dimnum=1")
+if "!dim!"=="KB" (set "scolor=%_fDGray%" & set "dimnum=2")
+if "!dim!"=="MB" (set "scolor=%_fGreen%" & set "dimnum=3")
+if "!dim!"=="GB" (set "scolor=%_fYellow%" & set "dimnum=4")
+if "!dim!"=="TB" (set "scolor=%_fRed%" & set "dimnum=5")
+goto FolderSizeNotEnabledNext
+:CountFolders <letter>
+if not "!count[%1]!"=="" goto CountFoldersEnd
+for /f %%z in ('dir /b /ad-h-s ^|%windir%\system32\FIND.exe /c /v "" ') do set "count[%1]=%%z"
+if "!count[%1]!"=="0" goto CountFoldersZero
+for /d %%x in (*) do (
+cd %%x 2>nul
+if "!errorlevel!"=="0" (set "cdcfolcontinue=0") else (set "cdcfolcontinue=1")
+if "%DisableLowSizes%"=="enabled" (
+for /f "tokens=2-3 delims= " %%y in ('
+robocopy "!CD!" "%TEMP%" /S /L /XJ /NFL /NDL /NJH /R:0 ^| findstr "Bytes"
+') do (
+set dlm=%%z
+set "dlm=!dlm:k=KB!" & set "dlm=!dlm:m=MB!" & set "dlm=!dlm:g=GB!" & set "dim=!dlm:t=TB!"
+if !dim! EQU %%z set dlm=B
+set "slze=%%y !dlm!"
+set "slzee=%%y"
+)
+if "!dlm!"=="B" (set "dlmnum=1")
+if "!dlm!"=="KB" (set "dlmnum=2")
+if "!dlm!"=="MB" (set "dlmnum=3")
+if "!dlm!"=="GB" (set "dlmnum=4")
+if "!dlm!"=="TB" (set "dlmnum=5")
+for /l %%z in (10,-1,1) do (if not "!slzee:.=!"=="!slzee!" set slzee=!slzee:~0,%%z!)
+if !low[2]! gtr !dlmnum! (set /a count[%1]=!count[%1]!-1) else (if not !low[1]! leq !slzee! (set /a count[%1]=!count[%1]!-1))
+)
+if "!cdcfolcontinue!"=="0" cd ..
+)
+:CountFoldersEnd
+exit /b
+:CountFoldersZero
+set "count[%1]="
 exit /b
