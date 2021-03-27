@@ -23,7 +23,3 @@ DO NOT DOWNLOAD THIS PROJECT! DEVELOPEMENT IS STILL IN PROGRESS!
         ├───Folder 1.1
         └───Folder 1.2
             └───Folder 1.2.1
-
-"Tree-Mod-Updater.bat" is a file which always downloads the newest version of the main script (in %temp%) and executes it. The Updater has all the options from the main script. It can also update itself, if I add new options. You will also be notified if there are new options available.
-
-"TreeModForUpdater.bat" is just a file for the "Tree-Mod-Updater.bat". You shouldn't download it.
