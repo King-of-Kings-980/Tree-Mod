@@ -1,6 +1,7 @@
 @echo off
+setlocal enableDelayedExpansion
 title Tree Mod Whith Colors and Folder Sizes
-if defined %1 goto SkipSettings
+if not "%1"=="" goto SkipSettings
 :Settings
 rem Set the following variable to enabled to set the color of the tree and the folders everytime you start the script. (If you just press ENTER, the colors will be randomized)
 set "ChooseColor=disabled"
@@ -13,23 +14,29 @@ set "SameColorForTreeAndFolders=disabled"
 rem Set the following variable to enabled if you want to disable the color white for random colors
 set "DisableColorWhiteForRandomColors=disabled"
 rem Set the following variable to enabled if you want to choose how big the size of a folder has to be to display its subfolders. This script will always show the main folder and at least one subfolder
-set "DisableLowSizes=enabled"
+set "DisableLowSizes=disabled"
+rem Set the following variable to enabled if the script crashes at the end or it doesn't diplay a white line and you do not have Windows 10
+set "DisableReachedEnd=disabled"
+rem Set the time in seconds, error messages are displayed:
+set "errortime=2"
 :SkipSettings
 set "reachedend=                                                                                                                                                                     "
-setlocal enableDelayedExpansion
 FOR /F %%A in ('ECHO prompt $E^| cmd') DO SET "ESC=%%A"
-rem If the script crashes at the end or it doesn't diplay a white line and you do not have Windows 10, delete the following line:
+if "%DisableReachedEnd%"=="enabled" goto MainScript
 set "reachedend=%reachedend%%ESC%[K"
 :MainScript
 set "shownext=y"
 if not "%ChoosePath%"=="enabled" goto MaxSize
-echo Path:
+setlocal DisableDelayedExpansion
+echo Path: (!userprofile! or .. etc. works, too)
+endlocal
 set /p _path=
 if not defined _path set _path=%cd%
 cls
-cd /d "!_path!"
-if "%cd%"=="C:\" cd Users
+cd /d "%_path%"
+if not "%errorlevel%"=="0" (for /l %%z in (%errortime%,0,-1) do (echo The path "%_path%" could not be found. Make sure to spell it correctly.& title %%zs& timeout /t 1 /nobreak >nul)& title Tree Mod Whith Colors and Folder Sizes& set "_path="& goto MainScript)
 :MaxSize
+title Path: %cd%
 if not "%DisableLowSizes%"=="enabled" goto SetColors
 cls
 echo Folder size which is required to show a folders subfolders (^<value^> ^<unit: B/KB/MB/GB/TB^>, e.g. "100 MB"):
@@ -46,28 +53,17 @@ for %%z in (%LowestFolderSize%) do (
 set /a lownum+=1
 set "low[!lownum!]=%%z"
 )
-echo Only enter a value and a unit!
-timeout /t 2 /nobreak >nul
+for /l %%z in (%errortime%,0,-1) do (echo Only enter a value and a unit!& title %%zs& timeout /t 1 /nobreak >nul)
 goto MaxSize
 )
-if %low[1]% geq 1000 (
-if not "%low[2]%"=="TB" (
-echo The value has to be smaller than 1000!
-timeout /t 2 /nobreak >nul
-goto MaxSize
-)
-)
+if %low[1]% geq 1000 (if not "%low[2]%"=="TB" (for /l %%z in (%errortime%,0,-1) do (echo The value has to be smaller than 1000!& title %%zs& timeout /t 1 /nobreak >nul)& goto MaxSize))
 if /i "%low[2]%"=="B" set "low[2]=1"
 if /i "%low[2]%"=="KB" set "low[2]=2"
 if /i "%low[2]%"=="MB" set "low[2]=3"
 if /i "%low[2]%"=="GB" set "low[2]=4"
 if /i "%low[2]%"=="TB" set "low[2]=5"
 for %%z in (1,2,3,4,5) do (if "%low[2]%"=="%%z" set "low2def=y")
-if not defined low2def (
-echo Wrong unit!
-timeout /t 2 /nobreak >nul
-goto MaxSize
-)
+if not defined low2def (for /l %%z in (%errortime%,0,-1) do (echo Wrong unit!& title %%zs& timeout /t 1 /nobreak >nul)& goto MaxSize)
 title Path: %cd%; Size limit: %low[1]% %low[2]%
 :SetColors
 cls
@@ -212,7 +208,7 @@ if "%_RND%"=="W" set %ground%color=_fBCyan
 if "%_RND%"=="X" set %ground%color=_fBWhite
 if not defined %ground%color goto LoopColorSelector
 if "%ground%"=="f" goto SetGround
-
+::#
 if not "%SameColorForTreeAndFolders%"=="enabled" (if "!fcolor!"=="%tcolor%" goto SetGround)
 if "%DisableColorWhiteForRandomColors%"=="disabled" goto StartTree
 if "!fcolor!"=="_fBWhite" goto SetGround
@@ -223,523 +219,77 @@ set "fcolor=!%fcolor%!"
 set "tcolor=!%tcolor%!"
 call :FolderSize
 echo %maincol%%cd% !scolor!!size!
-call :CountFolders a
-for /d %%a in (*) do (
-cd "%%a" 2>nul
-if !errorlevel!==0 (
-set cd[a]=y
-) else (
-set cd[a]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-set /a counter[a]=!counter[a]!+1
-if "!counter[a]!"=="!count[a]!" (
-set "counter[a]="& set "count[a]="
-set "t[a]= "
-set "kl=À"
-) else (
-set "t[a]=³"
-set "kl=Ã"
-)
-echo %tcolor%!kl!ÄÄÄ!fcolor!%%a !scolor!!size!
-if !cd[a]!==y (
-call :CountFolders b
-for /d %%b in (*) do (
-cd "%%b" 2>nul
-if !errorlevel!==0 (
-set cd[b]=y
-) else (
-set cd[b]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-set /a counter[b]=!counter[b]!+1
-if "!counter[b]!"=="!count[b]!" (
-set "counter[b]="& set "count[b]="
-set "t[b]= "
-set "kl=À"
-) else (
-set "t[b]=³"
-set "kl=Ã"
-)
-echo %tcolor%!t[a]!   !kl!ÄÄÄ!fcolor!%%b !scolor!!size!
-if !cd[b]!==y (
-call :CountFolders c
-for /d %%c in (*) do (
-cd "%%c" 2>nul
-if !errorlevel!==0 (
-set cd[c]=y
-) else (
-set cd[c]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-set /a counter[c]=!counter[c]!+1
-if "!counter[c]!"=="!count[c]!" (
-set "counter[c]="& set "count[c]="
-set "t[c]= "
-set "kl=À"
-) else (
-set "t[c]=³"
-set "kl=Ã"
-)
-echo %tcolor%!t[a]!   !t[b]!   !kl!ÄÄÄ!fcolor!%%c !scolor!!size!
-if !cd[c]!==y (
-call :CountFolders d
-for /d %%d in (*) do (
-cd "%%d" 2>nul
-if !errorlevel!==0 (
-set cd[d]=y
-) else (
-set cd[d]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-set /a counter[d]=!counter[d]!+1
-if "!counter[d]!"=="!count[d]!" (
-set "counter[d]="& set "count[d]="
-set "t[d]= "
-set "kl=À"
-) else (
-set "t[d]=³"
-set "kl=Ã"
-)
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !kl!ÄÄÄ!fcolor!%%d !scolor!!size!
-if !cd[d]!==y (
-call :CountFolders e
-for /d %%e in (*) do (
-cd "%%e" 2>nul
-if !errorlevel!==0 (
-set cd[e]=y
-) else (
-set cd[e]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-set /a counter[e]=!counter[e]!+1
-if "!counter[e]!"=="!count[e]!" (
-set "counter[e]="& set "count[e]="
-set "t[e]= "
-set "kl=À"
-) else (
-set "t[e]=³"
-set "kl=Ã"
-)
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !kl!ÄÄÄ!fcolor!%%e !scolor!!size!
-if !cd[e]!==y (
-call :CountFolders f
-for /d %%f in (*) do (
-cd "%%f" 2>nul
-if !errorlevel!==0 (
-set cd[f]=y
-) else (
-set cd[f]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-set /a counter[f]=!counter[f]!+1
-if "!counter[f]!"=="!count[f]!" (
-set "counter[f]="& set "count[f]="
-set "t[f]= "
-set "kl=À"
-) else (
-set "t[f]=³"
-set "kl=Ã"
-)
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !kl!ÄÄÄ!fcolor!%%f !scolor!!size!
-if !cd[f]!==y (
-call :CountFolders g
-for /d %%g in (*) do (
-set /a counter[g]=!counter[g]!+1
-if "!counter[g]!"=="!count[g]!" (
-set "counter[g]="& set "count[g]="
-set "t[g]= "
-set "kl=À"
-) else (
-set "t[g]=³"
-set "kl=Ã"
-)
-cd "%%g" 2>nul
-if !errorlevel!==0 (
-set cd[g]=y
-) else (
-set cd[g]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !kl!ÄÄÄ!fcolor!%%g !scolor!!size!
-if !cd[g]!==y (
-call :CountFolders h
-for /d %%h in (*) do (
-set /a counter[h]=!counter[h]!+1
-if "!counter[h]!"=="!count[h]!" (
-set "counter[h]="& set "count[h]="
-set "t[h]= "
-set "kl=À"
-) else (
-set "t[h]=³"
-set "kl=Ã"
-)
-cd "%%h" 2>nul
-if !errorlevel!==0 (
-set cd[h]=y
-) else (
-set cd[h]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !kl!ÄÄÄ!fcolor!%%h !scolor!!size!
-if !cd[h]!==y (
-call :CountFolders i
-for /d %%i in (*) do (
-set /a counter[i]=!counter[i]!+1
-if "!counter[i]!"=="!count[i]!" (
-set "counter[i]="& set "count[i]="
-set "t[i]= "
-set "kl=À"
-) else (
-set "t[i]=³"
-set "kl=Ã"
-)
-cd "%%i" 2>nul
-if !errorlevel!==0 (
-set cd[i]=y
-) else (
-set cd[i]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !kl!ÄÄÄ!fcolor!%%i !scolor!!size!
-if !cd[i]!==y (
-call :CountFolders j
-for /d %%j in (*) do (
-set /a counter[j]=!counter[j]!+1
-if "!counter[j]!"=="!count[j]!" (
-set "counter[j]="& set "count[j]="
-set "t[j]= "
-set "kl=À"
-) else (
-set "t[j]=³"
-set "kl=Ã"
-)
-cd "%%j" 2>nul
-if !errorlevel!==0 (
-set cd[j]=y
-) else (
-set cd[j]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !kl!ÄÄÄ!fcolor!%%j !scolor!!size!
-if !cd[j]!==y (
-call :CountFolders k
-for /d %%k in (*) do (
-set /a counter[k]=!counter[k]!+1
-if "!counter[k]!"=="!count[k]!" (
-set "counter[k]="& set "count[k]="
-set "t[k]= "
-set "kl=À"
-) else (
-set "t[k]=³"
-set "kl=Ã"
-)
-cd "%%k" 2>nul
-if !errorlevel!==0 (
-set cd[k]=y
-) else (
-set cd[k]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !kl!ÄÄÄ!fcolor!%%k !scolor!!size!
-if !cd[k]!==y (
-call :CountFolders l
-for /d %%l in (*) do (
-set /a counter[l]=!counter[l]!+1
-if "!counter[l]!"=="!count[l]!" (
-set "counter[l]="& set "count[l]="
-set "t[l]= "
-set "kl=À"
-) else (
-set "t[l]=³"
-set "kl=Ã"
-)
-cd "%%l" 2>nul
-if !errorlevel!==0 (
-set cd[l]=y
-) else (
-set cd[l]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !kl!ÄÄÄ!fcolor!%%l !scolor!!size!
-if !cd[l]!==y (
-call :CountFolders m
-for /d %%m in (*) do (
-set /a counter[m]=!counter[m]!+1
-if "!counter[m]!"=="!count[m]!" (
-set "counter[m]="& set "count[m]="
-set "t[m]= "
-set "kl=À"
-) else (
-set "t[m]=³"
-set "kl=Ã"
-)
-cd "%%m" 2>nul
-if !errorlevel!==0 (
-set cd[m]=y
-) else (
-set cd[m]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !kl!ÄÄÄ!fcolor!%%m !scolor!!size!
-if !cd[m]!==y (
-call :CountFolders n
-for /d %%n in (*) do (
-set /a counter[n]=!counter[n]!+1
-if "!counter[n]!"=="!count[n]!" (
-set "counter[n]="& set "count[n]="
-set "t[n]= "
-set "kl=À"
-) else (
-set "t[n]=³"
-set "kl=Ã"
-)
-cd "%%n" 2>nul
-if !errorlevel!==0 (
-set cd[n]=y
-) else (
-set cd[n]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !kl!ÄÄÄ!fcolor!%%n !scolor!!size!
-if !cd[n]!==y (
-call :CountFolders o
-for /d %%o in (*) do (
-set /a counter[o]=!counter[o]!+1
-if "!counter[o]!"=="!count[o]!" (
-set "counter[o]="& set "count[o]="
-set "t[o]= "
-set "kl=À"
-) else (
-set "t[o]=³"
-set "kl=Ã"
-)
-cd "%%o" 2>nul
-if !errorlevel!==0 (
-set cd[o]=y
-) else (
-set cd[o]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !kl!ÄÄÄ!fcolor!%%o !scolor!!size!
-if !cd[o]!==y (
-call :CountFolders p
-for /d %%p in (*) do (
-set /a counter[p]=!counter[p]!+1
-if "!counter[p]!"=="!count[p]!" (
-set "counter[p]="& set "count[p]="
-set "t[p]= "
-set "kl=À"
-) else (
-set "t[p]=³"
-set "kl=Ã"
-)
-cd "%%p" 2>nul
-if !errorlevel!==0 (
-set cd[p]=y
-) else (
-set cd[p]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !kl!ÄÄÄ!fcolor!%%p !scolor!!size!
-if !cd[p]!==y (
-call :CountFolders q
-for /d %%q in (*) do (
-set /a counter[q]=!counter[q]!+1
-if "!counter[q]!"=="!count[q]!" (
-set "counter[q]="& set "count[q]="
-set "t[q]= "
-set "kl=À"
-) else (
-set "t[q]=³"
-set "kl=Ã"
-)
-cd "%%q" 2>nul
-if !errorlevel!==0 (
-set cd[q]=y
-) else (
-set cd[q]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !t[p]!   !kl!ÄÄÄ!fcolor!%%q !scolor!!size!
-if !cd[q]!==y (
-call :CountFolders r
-for /d %%r in (*) do (
-set /a counter[r]=!counter[r]!+1
-if "!counter[r]!"=="!count[r]!" (
-set "counter[r]="& set "count[r]="
-set "t[r]= "
-set "kl=À"
-) else (
-set "t[r]=³"
-set "kl=Ã"
-)
-cd "%%r" 2>nul
-if !errorlevel!==0 (
-set cd[r]=y
-) else (
-set cd[r]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !t[p]!   !t[q]!   !kl!ÄÄÄ!fcolor!%%r !scolor!!size!
-if !cd[r]!==y (
-call :CountFolders s
-for /d %%s in (*) do (
-set /a counter[s]=!counter[s]!+1
-if "!counter[s]!"=="!count[s]!" (
-set "counter[s]="& set "count[s]="
-set "t[s]= "
-set "kl=À"
-) else (
-set "t[s]=³"
-set "kl=Ã"
-)
-cd "%%s" 2>nul
-if !errorlevel!==0 (
-set cd[s]=y
-) else (
-set cd[s]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !t[p]!   !t[q]!   !t[r]!   !kl!ÄÄÄ!fcolor!%%s !scolor!!size!
-if !cd[s]!==y (
-call :CountFolders t
-for /d %%t in (*) do (
-set /a counter[t]=!counter[t]!+1
-if "!counter[t]!"=="!count[t]!" (
-set "counter[t]="& set "count[t]="
-set "t[t]= "
-set "kl=À"
-) else (
-set "t[t]=³"
-set "kl=Ã"
-)
-cd "%%t" 2>nul
-if !errorlevel!==0 (
-set cd[t]=y
-) else (
-set cd[t]=n
-)
-call :FolderSize
-if "!shownext!"=="y" (
-echo %tcolor%!t[a]!   !t[b]!   !t[c]!   !t[d]!   !t[e]!   !t[f]!   !t[g]!   !t[h]!   !t[i]!   !t[j]!   !t[k]!   !t[l]!   !t[m]!   !t[n]!   !t[o]!   !t[p]!   !t[q]!   !t[r]!   !t[s]!   !kl!ÄÄÄ!fcolor!%%t !scolor!!size!
-if !cd[t]!==y (
-call :CountFolders u
-for /d %%u in (*) do (
-set /a counter[u]=!counter[u]!+1
-if "!counter[u]!"=="!count[u]!" (
-set "counter[u]="& set "count[u]="
-set "t[u]= "
-set "kl=À"
-) else (
-set "t[u]=³"
-set "kl=Ã"
-)
-)
-)
-)
-if !cd[t]!==y cd ..
-)
-)
-)
-if !cd[s]!==y cd ..
-)
-)
-)
-if !cd[r]!==y cd ..
-)
-)
-)
-if !cd[q]!==y cd ..
-)
-)
-)
-if !cd[p]!==y cd ..
-)
-)
-)
-if !cd[o]!==y cd ..
-)
-)
-)
-if !cd[n]!==y cd ..
-)
-)
-)
-if !cd[m]!==y cd ..
-)
-)
-)
-if !cd[l]!==y cd ..
-)
-)
-)
-if !cd[k]!==y cd ..
-)
-)
-)
-if !cd[j]!==y cd ..
-)
-)
-)
-if !cd[i]!==y cd ..
-)
-)
-)
-if !cd[h]!==y cd ..
-)
-)
-)
-if !cd[g]!==y cd ..
-)
-)
-)
-if !cd[f]!==y cd ..
-)
-)
-)
-if !cd[e]!==y cd ..
-)
-)
-)
-if !cd[d]!==y cd ..
-)
-)
-)
-if !cd[c]!==y cd ..
-)
-)
-)
-if !cd[b]!==y cd ..
-)
-)
-)
-if !cd[a]!==y cd ..
-)
-)
+call :TreeModMain a
 echo.
 echo %_bBWhite%%reachedend%
 echo %_RESET%
 pause>nul
+exit /b
+:TreeModMain <letter>
+setlocal EnableDelayedExpansion
+call :CountFolders %1
+for /d %%%1 in (*) do (
+cd "%%%1" 2>nul
+if !errorlevel!==0 (
+set cd[%1]=y
+) else (
+set cd[%1]=n
+)
+call :FolderSize
+if "!shownext!"=="y" (
+set /a counter[%1]=!counter[%1]!+1
+if "!counter[%1]!"=="!count[%1]!" (
+set "counter[%1]="
+set "count[%1]="
+set "t[%1]=    "
+set "kl=À"
+) else (
+set "t[%1]=³   "
+set "kl=Ã"
+)
+if "%1"=="a" echo %tcolor%!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="b" echo %tcolor%!t[a]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="c" echo %tcolor%!t[a]!!t[b]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="d" echo %tcolor%!t[a]!!t[b]!!t[c]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="e" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="f" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="g" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="h" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="i" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="j" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="k" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="l" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="m" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="n" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="o" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="p" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="q" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="r" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="s" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="t" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="u" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="v" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="w" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="x" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!t[w]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="y" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!t[w]!!t[x]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if "%1"=="z" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!t[w]!!t[x]!!t[y]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+if !cd[%1]!==y (
+set lettercounter=1
+for %%z in (a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z) do (
+set /a lettercounter=!lettercounter!+1
+if "%1"=="%%z" set lettercount=!lettercounter!
+)
+set letterco=0
+for %%z in (a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,0) do (
+set /a letterco=!letterco!+1
+if "!letterco!"=="!lettercount!" set letter=%%z
+)
+if not "!letter!"=="" (if not "!letter!"=="0" call :TreeModMain !letter!)
+)
+)
+if !cd[%1]!==y cd ..
+)
+endlocal
 exit /b
 :FolderSize
 if not "%DisableLowSizes%"=="enabled" goto FolderSizeNotEnabled
@@ -758,15 +308,9 @@ if "!dim!"=="MB" (set "scolor=%_fGreen%" & set "dimnum=3")
 if "!dim!"=="GB" (set "scolor=%_fYellow%" & set "dimnum=4")
 if "!dim!"=="TB" (set "scolor=%_fRed%" & set "dimnum=5")
 for /l %%z in (10,-1,1) do (if not "!sizee:.=!"=="!sizee!" set sizee=!sizee:~0,%%z!)
-if !low[2]! gtr !dimnum! (
-set "shownext=n"
-) else (
-if !low[1]! leq !sizee! (
-set "shownext=y"
-) else (
-set "shownext=n"
-)
-)
+if !low[2]! gtr !dimnum! set "shownext=n"
+if !low[2]! equ !dimnum! if !low[1]! leq !sizee! (set "shownext=y") else (set "shownext=n")
+if !low[2]! lss !dimnum! set "shownext=y"
 :FolderSizeNotEnabledNext
 if "%_namesizecolor%"=="y" (
 set "fcolor=!scolor!"
@@ -812,7 +356,8 @@ if "!dlm!"=="MB" (set "dlmnum=3")
 if "!dlm!"=="GB" (set "dlmnum=4")
 if "!dlm!"=="TB" (set "dlmnum=5")
 for /l %%z in (10,-1,1) do (if not "!slzee:.=!"=="!slzee!" set slzee=!slzee:~0,%%z!)
-if !low[2]! gtr !dlmnum! (set /a count[%1]=!count[%1]!-1) else (if not !low[1]! leq !slzee! (set /a count[%1]=!count[%1]!-1))
+if !low[2]! gtr !dlmnum! set /a count[%1]=!count[%1]!-1
+if !low[2]! equ !dlmnum! if !low[1]! gtr !slzee! set /a count[%1]=!count[%1]!-1
 )
 if "!cdcfolcontinue!"=="0" cd ..
 )
