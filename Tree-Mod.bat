@@ -18,7 +18,9 @@ set "DisableLowSizes=disabled"
 rem Set the following variable to enabled if the script crashes at the end or it doesn't diplay a white line and you do not have Windows 10
 set "DisableReachedEnd=disabled"
 rem Set the time in seconds, error messages are displayed:
-set "errortime=2"
+set "ErrorTime=2"
+rem Set the following variable to enabled if you want to hide the real folder names and display e.g. Folder_1.4.2 instead:
+set "DemoVersion=disabled"
 :SkipSettings
 set "reachedend=                                                                                                                                                                     "
 FOR /F %%A in ('ECHO prompt $E^| cmd') DO SET "ESC=%%A"
@@ -247,6 +249,35 @@ set "kl=À"
 set "t[%1]=³   "
 set "kl=Ã"
 )
+if "%demoversion%"=="enabled" (
+set /a folder%1=!folder%1!+1
+if "%1"=="a" echo %tcolor%!kl!ÄÄÄ!fcolor!Folder_!foldera! !scolor!!size!
+if "%1"=="b" echo %tcolor%!t[a]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb! !scolor!!size!
+if "%1"=="c" echo %tcolor%!t[a]!!t[b]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc! !scolor!!size!
+if "%1"=="d" echo %tcolor%!t[a]!!t[b]!!t[c]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd! !scolor!!size!
+if "%1"=="e" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere! !scolor!!size!
+if "%1"=="f" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf! !scolor!!size!
+if "%1"=="g" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg! !scolor!!size!
+if "%1"=="h" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh! !scolor!!size!
+if "%1"=="i" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi! !scolor!!size!
+if "%1"=="j" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj! !scolor!!size!
+if "%1"=="k" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk! !scolor!!size!
+if "%1"=="l" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl! !scolor!!size!
+if "%1"=="m" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm! !scolor!!size!
+if "%1"=="n" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern! !scolor!!size!
+if "%1"=="o" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero! !scolor!!size!
+if "%1"=="p" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp! !scolor!!size!
+if "%1"=="q" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp!.!folderq! !scolor!!size!
+if "%1"=="r" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp!.!folderq!.!folderr! !scolor!!size!
+if "%1"=="s" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp!.!folderq!.!folderr!.!folders! !scolor!!size!
+if "%1"=="t" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp!.!folderq!.!folderr!.!folders!.!foldert! !scolor!!size!
+if "%1"=="u" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp!.!folderq!.!folderr!.!folders!.!foldert!.!folderu! !scolor!!size!
+if "%1"=="v" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp!.!folderq!.!folderr!.!folders!.!foldert!.!folderu!.!folderv! !scolor!!size!
+if "%1"=="w" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp!.!folderq!.!folderr!.!folders!.!foldert!.!folderu!.!folderv!.!folderw! !scolor!!size!
+if "%1"=="x" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!t[w]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!folderx! !scolor!!size!
+if "%1"=="y" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!t[w]!!t[x]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp!.!folderq!.!folderr!.!folders!.!foldert!.!folderu!.!folderv!.!folderw!.!folderx!.!foldery! !scolor!!size!
+if "%1"=="z" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!t[w]!!t[x]!!t[y]!!kl!ÄÄÄ!fcolor!Folder_!foldera!.!folderb!.!folderc!.!folderd!.!foldere!.!folderf!.!folderg!.!folderh!.!folderi!.!folderj!.!folderk!.!folderl!.!folderm!.!foldern!.!foldero!.!folderp!.!folderq!.!folderr!.!folders!.!foldert!.!folderu!.!folderv!.!folderw!.!folderx!.!foldery!.!folderz! !scolor!!size!
+) else (
 if "%1"=="a" echo %tcolor%!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
 if "%1"=="b" echo %tcolor%!t[a]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
 if "%1"=="c" echo %tcolor%!t[a]!!t[b]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
@@ -273,6 +304,7 @@ if "%1"=="w" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!
 if "%1"=="x" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!t[w]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
 if "%1"=="y" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!t[w]!!t[x]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
 if "%1"=="z" echo %tcolor%!t[a]!!t[b]!!t[c]!!t[d]!!t[e]!!t[f]!!t[g]!!t[h]!!t[i]!!t[j]!!t[k]!!t[l]!!t[m]!!t[n]!!t[o]!!t[p]!!t[q]!!t[r]!!t[s]!!t[t]!!t[u]!!t[v]!!t[w]!!t[x]!!t[y]!!kl!ÄÄÄ!fcolor!%%%1 !scolor!!size!
+)
 if !cd[%1]!==y (
 set lettercounter=1
 for %%z in (a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z) do (
