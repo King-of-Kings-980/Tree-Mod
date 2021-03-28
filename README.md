@@ -1,4 +1,4 @@
-"Tree-Mod.bat" is the main script which can display the normal tree
+"Tree-Mod.bat" displays the normal tree:
     - with an option which lets you choose the path
     - with the folder size
         * with a minimum size
