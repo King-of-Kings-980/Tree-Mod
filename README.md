@@ -13,7 +13,7 @@ Displays the normal tree:
    * You can disable colors you do not like
  - with an option which, instead of displaying the real folder name, displays e.g.: Folder_1; Folder_1.1; Folder_1.2; Folder_1.2.1; Folder_2
 
-Note: If you are not using Windows 10, your script might crash at the end. If that happens, you can enable an option (`set DisableReachedEnd=enabled`) which should fix it.
+Note: Currently, this is Windows 10 only.
 
 
 
@@ -28,7 +28,7 @@ Note: If you are not using Windows 10, your script might crash at the end. If th
      * List files bigger than ...
      * List files smaler than ...
      * If the range of the listed files is bigger than the range of the displayed folders, the files outside of the range of the folder size will not be displayed; e.g.: `"Max_Folder_Size=100 MB"  "Max_File_Size=200 MB" -> Files bigger than 100 MB will not be displayed.`
-   * set colors in the options menu and do not randomize them; **This option will ignore any othe option concerning colors!**
+   * set colors in the options menu and do not randomize them; **This option will ignore any other option concerning colors!**
    * exclude colors you do not like; _This option will replace the option to disable the color white._
    * displaying the folder size will be optional
    * disable colors compleatly
@@ -39,6 +39,7 @@ Note: If you are not using Windows 10, your script might crash at the end. If th
  - A new file which lets you choose the options.
  - An installer
    * "Installing" the Tree-Mod.bat:
+     * Install for Windows 10 or a collorless version for older versions of Windows.
      * Place Tree-Mod.bat and some other files in `%ProgramFiles%` or in `%LocalAppdata%`
      * Add the path to those files in the path-variable so that you can run the script from anywhere by typing `TreeMod` in CMD. This will work like a command:
        * `TreeMod /?` will give you all the available options, e.g. `/d` or `/s`
